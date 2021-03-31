@@ -1,7 +1,9 @@
 use std::collections::HashSet;
 use std::env;
+use std::sync::Arc;
 
 use serenity::async_trait;
+use serenity::client::bridge::gateway::ShardManager;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::prelude::*;
@@ -24,6 +26,12 @@ impl EventHandler for Handler {
     async fn resume(&self, _: Context, _: ResumedEvent) {
         info!("Resumed");
     }
+}
+
+struct ShardManagerContainer;
+
+impl TypeMapKey for ShardManagerContainer {
+    type Value = Arc<Mutex<ShardManager>>;
 }
 
 #[tokio::main]
@@ -54,7 +62,8 @@ async fn main() {
 
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("?"))
-        .group(&META_GROUP);
+        .group(&META_GROUP)
+        .group(&OWNER_GROUP);
 
     // Initialize client with token.
     let mut client = Client::builder(&token)
@@ -62,6 +71,12 @@ async fn main() {
         .framework(framework)
         .await
         .expect("Error creating client");
+
+    // Share data across shards.
+    {
+        let mut data = client.data.write().await;
+        data.insert::<ShardManagerContainer>(client.shard_manager.clone());
+    }
 
     // Start the client.
     if let Err(e) = client.start().await {
