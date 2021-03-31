@@ -63,7 +63,8 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("?"))
         .group(&META_GROUP)
-        .group(&OWNER_GROUP);
+        .group(&OWNER_GROUP)
+        .help(&HELP);
 
     // Initialize client with token.
     let mut client = Client::builder(&token)
