@@ -1,6 +1,9 @@
+use std::collections::HashSet;
 use std::env;
 
 use serenity::async_trait;
+use serenity::framework::StandardFramework;
+use serenity::http::Http;
 use serenity::model::event::ResumedEvent;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
@@ -35,9 +38,23 @@ async fn main() {
     // Retrieve token from environment.
     let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
 
+    // Store bot owner.
+    let http = Http::new_with_token(&token);
+    let owners = match http.get_current_application_info().await {
+        Ok(info) => {
+            let mut owners = HashSet::new();
+            owners.insert(info.owner.id);
+            owners
+        }
+        Err(e) => panic!("Could not access application info: {:?}", e),
+    };
+
+    let framework = StandardFramework::new().configure(|c| c.owners(owners).prefix("?"));
+
     // Initialize client with token.
     let mut client = Client::builder(&token)
         .event_handler(Handler)
+        .framework(framework)
         .await
         .expect("Error creating client");
 
