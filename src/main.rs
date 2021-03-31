@@ -78,6 +78,13 @@ async fn main() {
         data.insert::<ShardManagerContainer>(client.shard_manager.clone());
     }
 
+    // Handle Ctrl-C.
+    let shard_manager = client.shard_manager.clone();
+    tokio::spawn(async move {
+        tokio::signal::ctrl_c().await.expect("Could not register Ctrl-C handler");
+        shard_manager.lock().await.shutdown_all().await;
+    });
+
     // Start the client.
     if let Err(e) = client.start().await {
         error!("Client error: {:?}", e);
