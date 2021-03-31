@@ -9,9 +9,9 @@ use serenity::prelude::*;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
-mod commands;
-
 use commands::*;
+
+mod commands;
 
 struct Handler;
 
