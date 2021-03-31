@@ -21,7 +21,9 @@ async fn quit(ctx: &Context, msg: &Message) -> CommandResult {
             manager.lock().await.shutdown_all().await;
         }
         None => {
-            msg.channel_id.say(&ctx, "There was a problem shutting down.").await?;
+            msg.channel_id
+                .say(&ctx, "There was a problem shutting down.")
+                .await?;
             error!("Problem getting shard manager");
         }
     }

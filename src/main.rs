@@ -81,7 +81,9 @@ async fn main() {
     // Handle Ctrl-C.
     let shard_manager = client.shard_manager.clone();
     tokio::spawn(async move {
-        tokio::signal::ctrl_c().await.expect("Could not register Ctrl-C handler");
+        tokio::signal::ctrl_c()
+            .await
+            .expect("Could not register Ctrl-C handler");
         shard_manager.lock().await.shutdown_all().await;
     });
 
