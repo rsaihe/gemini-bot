@@ -1,0 +1,17 @@
+[package]
+name = "gemini-bot"
+version = "0.1.0"
+authors = ["Amelia Clarke <amelia.amok@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+dotenv = "0.15"
+
+[dependencies.serenity]
+default-features = false
+features = ["client", "gateway", "model", "rustls_backend"]
+version = "0.10"
+
+[dependencies.tokio]
+features = ["rt-multi-thread"]
+version = "1"
