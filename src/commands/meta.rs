@@ -7,6 +7,7 @@ use serenity::framework::standard::{
 };
 use serenity::model::prelude::*;
 use serenity::prelude::*;
+use tracing::error;
 
 #[help]
 #[embed_error_colour("RED")]
@@ -31,8 +32,37 @@ async fn help(
 }
 
 #[group]
-#[commands(ping)]
+#[commands(invite, ping)]
 pub struct Meta;
+
+#[command]
+#[description("Get the invite link for the bot.")]
+async fn invite(ctx: &Context, msg: &Message) -> CommandResult {
+    // Get the current user.
+    let user = ctx.cache.current_user().await;
+
+    // Generate the invite URL.
+    let permissions = Permissions::ADD_REACTIONS
+        | Permissions::ATTACH_FILES
+        | Permissions::EMBED_LINKS
+        | Permissions::READ_MESSAGE_HISTORY
+        | Permissions::READ_MESSAGES
+        | Permissions::SEND_MESSAGES
+        | Permissions::USE_EXTERNAL_EMOJIS;
+    match user.invite_url(&ctx.http, permissions).await {
+        Ok(url) => {
+            msg.channel_id.say(&ctx, format!("<{}>", &url)).await?;
+        }
+        Err(e) => {
+            msg.channel_id
+                .say(&ctx, "There was a problem getting the invite link.")
+                .await?;
+            error!("Problem getting invite URL: {:?}", e);
+        }
+    };
+
+    Ok(())
+}
 
 #[command]
 #[description("Ping the bot.")]
