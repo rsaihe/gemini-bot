@@ -9,6 +9,10 @@ use serenity::prelude::*;
 use tracing::{error, info};
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
+mod commands;
+
+use commands::*;
+
 struct Handler;
 
 #[async_trait]
@@ -48,7 +52,9 @@ async fn main() {
         Err(e) => panic!("Could not access application info: {:?}", e),
     };
 
-    let framework = StandardFramework::new().configure(|c| c.owners(owners).prefix("?"));
+    let framework = StandardFramework::new()
+        .configure(|c| c.owners(owners).prefix("?"))
+        .group(&META_GROUP);
 
     // Initialize client with token.
     let mut client = Client::builder(&token)
