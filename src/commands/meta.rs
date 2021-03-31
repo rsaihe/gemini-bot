@@ -32,8 +32,39 @@ async fn help(
 }
 
 #[group]
-#[commands(invite, ping)]
+#[commands(about, invite, ping)]
 pub struct Meta;
+
+#[command]
+#[description("Display the bot's about page.")]
+async fn about(ctx: &Context, msg: &Message) -> CommandResult {
+    // Get the current user.
+    let user = ctx.cache.current_user().await;
+
+    // Get all the guilds the bot has access to.
+    let guilds = ctx.cache.guilds().await.len();
+    msg.channel_id
+        .send_message(&ctx.http, |m| {
+            m.embed(|e| {
+                e.colour((76, 187, 23))
+                    .title(&user.name)
+                    .thumbnail(&user.face())
+                    .description(format!(
+                        "I am a general purpose Discord bot, made with :heart: and Rust.\n\
+                        I am currently running on {} servers.",
+                        guilds,
+                    ))
+                    .field(
+                        "Links",
+                        "[Source](https://github.com/rsaihe/gemini-bot)",
+                        false,
+                    )
+            })
+        })
+        .await?;
+
+    Ok(())
+}
 
 #[command]
 #[description("Get the invite link for the bot.")]
