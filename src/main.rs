@@ -3,7 +3,7 @@ use std::env;
 use std::sync::Arc;
 
 use serenity::async_trait;
-use serenity::client::bridge::gateway::ShardManager;
+use serenity::client::bridge::gateway::{GatewayIntents, ShardManager};
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::prelude::*;
@@ -14,6 +14,7 @@ use tracing_subscriber::{EnvFilter, FmtSubscriber};
 use commands::*;
 
 mod commands;
+mod utils;
 
 struct Handler;
 
@@ -63,6 +64,7 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("?"))
         .group(&FUN_GROUP)
+        .group(&GENERAL_GROUP)
         .group(&META_GROUP)
         .group(&OWNER_GROUP)
         .help(&HELP);
@@ -71,6 +73,7 @@ async fn main() {
     let mut client = Client::builder(&token)
         .event_handler(Handler)
         .framework(framework)
+        .intents(GatewayIntents::GUILD_PRESENCES | GatewayIntents::non_privileged())
         .await
         .expect("Error creating client");
 
