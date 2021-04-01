@@ -29,7 +29,7 @@ static EIGHT_BALL_RESPONSES: [&str; 20] = [
 ];
 
 #[group]
-#[commands(eight_ball, shuffle)]
+#[commands(eight_ball, sarcastic, shuffle)]
 struct Fun;
 
 #[command("8ball")]
@@ -41,6 +41,29 @@ async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {
         EIGHT_BALL_RESPONSES.choose(&mut rng).unwrap()
     };
     msg.channel_id.say(&ctx, response).await?;
+
+    Ok(())
+}
+
+#[command]
+#[description("mAkEs yOuR TeXt sArCaStIc.")]
+#[min_args(1)]
+#[usage("<word>...")]
+async fn sarcastic(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    // Alternate the case of each grapheme.
+    let text: String = args
+        .message()
+        .trim()
+        .graphemes(true)
+        .enumerate()
+        .map(|(i, g)| match i % 2 {
+            0 => g.to_lowercase(),
+            1 => g.to_uppercase(),
+            _ => unreachable!(),
+        })
+        .collect();
+
+    msg.channel_id.say(&ctx, &text).await?;
 
     Ok(())
 }
