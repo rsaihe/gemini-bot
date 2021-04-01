@@ -1,8 +1,9 @@
 use rand::seq::SliceRandom;
 use serenity::framework::standard::macros::{command, group};
-use serenity::framework::standard::CommandResult;
+use serenity::framework::standard::{Args, CommandResult};
 use serenity::model::prelude::*;
 use serenity::prelude::*;
+use unicode_segmentation::UnicodeSegmentation;
 
 static EIGHT_BALL_RESPONSES: [&str; 20] = [
     "It is certain.",
@@ -28,7 +29,7 @@ static EIGHT_BALL_RESPONSES: [&str; 20] = [
 ];
 
 #[group]
-#[commands(eight_ball)]
+#[commands(eight_ball, shuffle)]
 struct Fun;
 
 #[command("8ball")]
@@ -40,6 +41,28 @@ async fn eight_ball(ctx: &Context, msg: &Message) -> CommandResult {
         EIGHT_BALL_RESPONSES.choose(&mut rng).unwrap()
     };
     msg.channel_id.say(&ctx, response).await?;
+
+    Ok(())
+}
+
+#[command]
+#[description("Randomly shuffle words.")]
+#[min_args(1)]
+#[usage("<word>...")]
+async fn shuffle(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
+    // Shuffle graphemes in each Unicode word.
+    let words: String = args
+        .message()
+        .trim()
+        .split_word_bounds()
+        .map(|w| {
+            let mut graphemes: Vec<_> = w.graphemes(true).collect();
+            graphemes.shuffle(&mut rand::thread_rng());
+            graphemes.concat()
+        })
+        .collect();
+
+    msg.channel_id.say(&ctx, &words).await?;
 
     Ok(())
 }
