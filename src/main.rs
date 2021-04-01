@@ -62,6 +62,7 @@ async fn main() {
 
     let framework = StandardFramework::new()
         .configure(|c| c.owners(owners).prefix("?"))
+        .group(&FUN_GROUP)
         .group(&META_GROUP)
         .group(&OWNER_GROUP)
         .help(&HELP);
