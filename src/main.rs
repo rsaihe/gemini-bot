@@ -13,6 +13,7 @@ use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
 use commands::*;
 
+mod colours;
 mod commands;
 mod utils;
 

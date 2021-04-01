@@ -1,4 +1,4 @@
-use crate::utils;
+use crate::{colours, utils};
 use serenity::framework::standard::macros::{command, group};
 use serenity::framework::standard::{Args, CommandResult};
 use serenity::model::prelude::*;
@@ -33,7 +33,7 @@ async fn avatar(ctx: &Context, msg: &Message, args: Args) -> CommandResult {
 
     msg.channel_id
         .send_message(&ctx.http, |m| {
-            m.embed(|e| e.colour((76, 187, 23)).title(&name).image(&avatar))
+            m.embed(|e| e.colour(colours::SUCCESS).title(&name).image(&avatar))
         })
         .await?;
 

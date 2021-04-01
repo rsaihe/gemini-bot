@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use std::time::Instant;
 
+use crate::colours;
 use serenity::framework::standard::macros::{command, group, help};
 use serenity::framework::standard::{
     help_commands, Args, CommandGroup, CommandResult, HelpOptions,
@@ -46,7 +47,7 @@ async fn about(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id
         .send_message(&ctx.http, |m| {
             m.embed(|e| {
-                e.colour((76, 187, 23))
+                e.colour(colours::SUCCESS)
                     .title(&user.name)
                     .thumbnail(&user.face())
                     .description(format!(
