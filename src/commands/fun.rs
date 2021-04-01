@@ -4,10 +4,6 @@ use serenity::framework::standard::CommandResult;
 use serenity::model::prelude::*;
 use serenity::prelude::*;
 
-#[group]
-#[commands(eight_ball)]
-struct Fun;
-
 static EIGHT_BALL_RESPONSES: [&str; 20] = [
     "It is certain.",
     "It is decidedly so.",
@@ -30,6 +26,10 @@ static EIGHT_BALL_RESPONSES: [&str; 20] = [
     "Outlook not so good.",
     "Very doubtful.",
 ];
+
+#[group]
+#[commands(eight_ball)]
+struct Fun;
 
 #[command("8ball")]
 #[description("Ask the Magic 8-Ball a question.")]
