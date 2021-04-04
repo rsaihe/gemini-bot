@@ -29,8 +29,31 @@ static EIGHT_BALL_RESPONSES: [&str; 20] = [
 ];
 
 #[group]
-#[commands(eight_ball, sarcastic, shuffle)]
+#[commands(bubblewrap, eight_ball, sarcastic, shuffle)]
 struct Fun;
+
+#[command]
+#[description("Generate a square of bubblewrap.")]
+async fn bubblewrap(ctx: &Context, msg: &Message) -> CommandResult {
+    const SIZE: usize = 12;
+
+    // Allocate space for bubblewrap.
+    let capacity = SIZE * SIZE * 7 + SIZE;
+    let mut bubblewrap = String::with_capacity(capacity);
+
+    // Generate a square of bubblewrap.
+    for _ in 0..SIZE {
+        for _ in 0..SIZE {
+            bubblewrap.push_str("||Pop||");
+        }
+
+        bubblewrap.push('\n');
+    }
+
+    msg.channel_id.say(&ctx, bubblewrap).await?;
+
+    Ok(())
+}
 
 #[command("8ball")]
 #[description("Ask the Magic 8-Ball a question.")]
