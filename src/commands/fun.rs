@@ -29,7 +29,7 @@ static EIGHT_BALL_RESPONSES: [&str; 20] = [
 ];
 
 #[group]
-#[commands(bubblewrap, eight_ball, sarcastic, shuffle)]
+#[commands(eight_ball, bubblewrap, sarcastic, shuffle)]
 struct Fun;
 
 #[command]
